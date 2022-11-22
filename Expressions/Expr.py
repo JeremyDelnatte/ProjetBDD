@@ -6,7 +6,7 @@ class Expr(ABC):
     attributes = []
 
     @abstractmethod
-    def toSQL(self) -> str:
+    def toSQL(self, db: str) -> str:
         raise NotImplementedError("This is an abstract class, subclasses should implement this.")
 
     @abstractmethod
