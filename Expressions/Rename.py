@@ -5,6 +5,8 @@ from Expressions.Rel import Rel
 class Rename(Expr):
 
     def __init__(self, attr: str, name: str, expr: Expr):
+        super().__init__()
+        
         if (not isinstance(attr, str)):
             raise TypeError(f"The type of attr must be str, but is {type(attr).__name__}.")
         
@@ -25,8 +27,7 @@ class Rename(Expr):
         
         if (db != self.db):
             self.db = db
-
-            # On récupère les attributs et on change le nom de l'attribut attr par name.
+            # On récupère les attributs et on change le nom de l'attribut attr par self.name.
             # Et on crée une liste avec seulement le nom des attributs qui va nous aider dans toSQL()
             self.attributes = deepcopy(self.expr.findAttributes(db))
             self.attributeNames = [attr[1] for attr in self.attributes]

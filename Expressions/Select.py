@@ -19,6 +19,8 @@ class Cst:
 class Select(Expr):
 
     def __init__(self, attr1: str, operator: str, attr2, expr: Expr):
+        super().__init__()
+        
         if (not isinstance(attr1, str)):
             raise TypeError(f"The type of attr1 must be str, but is {type(attr1).__name__}.")
         

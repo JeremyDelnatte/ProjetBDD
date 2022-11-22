@@ -5,6 +5,7 @@ from Expressions.Rel import Rel
 class Diff(Expr):
 
     def __init__(self, expr1: Expr, expr2: Expr):
+        super().__init__()
         
         if (not isinstance(expr1, Expr)):
             raise TypeError(f"The type of expr1 must be Expr, but is {type(expr1).__name__}.")
@@ -13,7 +14,7 @@ class Diff(Expr):
             raise TypeError(f"The type of expr2 must be Expr, but is {type(expr2).__name__}.")
 
         self.expr1 = expr1
-        self.expr2 = expr2
+        self.expr2 = expr2 
 
     def __str__(self) -> str:
         return f"Diff({str(self.expr1)}, {str(self.expr2)})"

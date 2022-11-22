@@ -4,6 +4,7 @@ from sqlite3 import connect
 class Rel(Expr):
 
     def __init__(self, relName: str):
+        super().__init__()
 
         if (not isinstance(relName, str)):
             raise TypeError(f"The type of relName must be str, but is {type(relName).__name__}.")

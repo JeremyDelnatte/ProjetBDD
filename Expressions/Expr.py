@@ -1,17 +1,19 @@
 from abc import ABC, abstractmethod
 
+# This is an abstract class.
 class Expr(ABC):
-    
-    db = None
-    attributes = []
 
     @abstractmethod
     def toSQL(self, db: str) -> str:
         raise NotImplementedError("This is an abstract class, subclasses should implement this.")
 
-    @abstractmethod
     def __init__(self):
-        raise NotImplementedError("This is an abstract class, subclasses should implement this.")
+        self.db = None
+        self.attributes = []
+
+        # print(__class__)
+
+        # raise NotImplementedError("This is an abstract class, subclasses should implement this.")
     
     @abstractmethod
     def findAttributes(self, db: str) -> list:

@@ -5,7 +5,8 @@ from Expressions.Rel import Rel
 class Union(Expr):
 
     def __init__(self, expr1: Expr, expr2: Expr):
-        
+        super().__init__()
+
         if (not isinstance(expr1, Expr)):
             raise TypeError(f"The type of expr1 must be Expr, but is {type(expr1).__name__}.")
         

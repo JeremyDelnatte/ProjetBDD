@@ -4,9 +4,8 @@ from Expressions.Rel import Rel
 
 class Join(Expr):
 
-    intersectAttributes = []
-
     def __init__(self, expr1: Expr, expr2: Expr):
+        super().__init__()
         
         if (not isinstance(expr1, Expr)):
             raise TypeError(f"The type of expr1 must be Expr, but is {type(expr1).__name__}.")
@@ -16,12 +15,13 @@ class Join(Expr):
 
         self.expr1 = expr1
         self.expr2 = expr2
+        self.intersectAttributes = []
 
     def __str__(self) -> str:
         return f"Join({str(self.expr1)}, {str(self.expr2)})"
     
     def findAttributes(self, db: str) -> list:
-        
+
         if (db != self.db):
             self.db = db
 

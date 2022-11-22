@@ -5,6 +5,8 @@ from Expressions.Rel import Rel
 class Proj(Expr):
 
     def __init__(self, attrs: list[str], expr: Expr):
+        super().__init__()
+        
         if (not isinstance(attrs, list) or not all(isinstance(attr, str) for attr in attrs)):
             raise TypeError("The type of attrs must be list[str].")
         
