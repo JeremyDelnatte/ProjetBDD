@@ -3,6 +3,7 @@ from Expressions.Expr import Expr
 from Expressions.Rename import Rename
 from Expressions.Rel import Rel
 from Expressions.Proj import Proj
+from Expressions.InvalidExpression import attributNotInSchemaError, differentTypeError
 
 class Cst:
 
@@ -40,15 +41,34 @@ class Select(Expr):
 
     def __str__(self) -> str:
         attr2String = str(self.attr2) if isinstance(self.attr2, Cst) else f"'{self.attr2}'"
-        return f"Select('{self.attr1}', '{self.operator}', {attr2String}, {str(self.expr)})"
-    
+        return f"Select('{self.attr1}', '{self.operator}', {attr2String}, {str(self.expr)})"  
+
+    def verify(self, db: str):
+        
+        self.expr.verify(db)
+
+        attrs = self.expr.findAttributes(db)
+
+        # Permet de vérifier que self.attr1 existe bien en tant qu'attribut de self.expr.
+        if (self.attr1 not in attrs):
+            attributNotInSchemaError(self, self.attr1, self.expr, attrs)
+        
+        # Si self.attr2 est de type str, cela signifie que c'est un attribut et pas une constante.
+        if (isinstance(self.attr2, str)):
+
+            # Permet de vérifier que self.attr2 existe bien en tant qu'attribut de self.expr.
+            if (self.attr2 not in attrs):
+                attributNotInSchemaError(self, self.attr2, self.expr, attrs)
+
+            # Permet de vérifier que self.attr1 et self.attr2 ont bien le même type.
+            if (attrs[self.attr1] != attrs[self.attr2]):
+                differentTypeError(self, self.attr1, self.attr2, self.expr, attrs)
+
     def findAttributes(self, db: str) -> list:
 
-        if (db != self.db):
-            self.db = db
-            self.attributes = deepcopy(self.expr.findAttributes(db))
-            
+        self.attributes = deepcopy(self.expr.findAttributes(db))
         return self.attributes
+
 
     def toSQL(self, db: str) -> str:
 

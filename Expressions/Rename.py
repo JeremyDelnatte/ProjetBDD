@@ -1,6 +1,7 @@
 from copy import deepcopy
 from Expressions.Expr import Expr
 from Expressions.Rel import Rel
+from Expressions.InvalidExpression import attributNotInSchemaError, attributAlreadyExists
 
 class Rename(Expr):
 
@@ -23,18 +24,24 @@ class Rename(Expr):
     def __str__(self) -> str:
         return f"Rename('{self.attr}', '{self.name}', {str(self.expr)})"
 
-    def findAttributes(self, db: str) -> list:
+    def verify(self, db: str):
         
-        if (db != self.db):
-            self.db = db
-            # On récupère les attributs et on change le nom de l'attribut attr par self.name.
-            # Et on crée une liste avec seulement le nom des attributs qui va nous aider dans toSQL()
-            self.attributes = deepcopy(self.expr.findAttributes(db))
-            self.attributeNames = [attr[1] for attr in self.attributes]
-            indexAttr = self.attributeNames.index(self.attr)
-            self.attributes[indexAttr] = self.attributes[indexAttr][:1] + tuple(self.name) + self.attributes[indexAttr][2:]
-            self.attributeNames[indexAttr] = f"{self.attr} '{self.name}'"
+        self.expr.verify(db)
 
+        attrs = self.expr.findAttributes(db)
+
+        if (self.attr not in attrs):
+            attributNotInSchemaError(self, self.attr, self.expr, attrs)
+
+        elif (self.name in attrs):
+            attributAlreadyExists(self, self.name, self.expr, attrs)
+
+    def findAttributes(self, db: str) -> dict:
+        
+        self.attributes = deepcopy(self.expr.findAttributes(db))
+
+        # On ne vérifie pas si l'attribut existe ou non mais cela va être vérifier après lors du verify()
+        self.attributes[self.attr] = self.name
         return self.attributes
 
 
@@ -49,6 +56,9 @@ class Rename(Expr):
 
         # Pour les autres type d'expressions, on ne peut pas être sûr de la forme, donc on rajoute des ().
         else:
-            expr_SQL = f"({expr_SQL})"        
+            expr_SQL = f"({expr_SQL})"   
 
-        return f"select {', '.join(self.attributeNames)} from {expr_SQL}"
+        attrs = list(self.attributes.keys())
+        attrs[attrs.index(self.name)] = f"{self.attr} '{self.name}'"    
+
+        return f"select {', '.join(attrs)} from {expr_SQL}"

@@ -1,5 +1,6 @@
 from Expressions.Expr import Expr
 from sqlite3 import connect
+from Expressions.InvalidExpression import tableDoesNotExistsError
 
 class Rel(Expr):
 
@@ -13,13 +14,20 @@ class Rel(Expr):
     
     def __str__(self) -> str:
         return f"Rel('{self.relName}')"
+    
+    def verify(self, db: str):
+        
+        # Permet de vérifier que relName est bien une table de db.
+        if (len(self.findAttributes(db)) == 0):
+            tableDoesNotExistsError(self, self.relName)
 
     def findAttributes(self, db: str) -> list:
 
-        if (db != self.db):
-            self.db = db
-            self.attributes = connect(db).cursor().execute(f"PRAGMA table_info({self.relName})").fetchall()
-            
+        attributeDescriptions = connect(db).cursor().execute(f"PRAGMA table_info({self.relName})").fetchall()  
+
+        for attr in attributeDescriptions:
+            self.attributes[attr[1]] = attr[2]
+
         return self.attributes
 
     def toSQL(self, db: str) -> str:

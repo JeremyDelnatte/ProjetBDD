@@ -8,13 +8,12 @@ class Expr(ABC):
         raise NotImplementedError("This is an abstract class, subclasses should implement this.")
 
     def __init__(self):
-        self.db = None
-        self.attributes = []
+        self.attributes = {}
 
-        # print(__class__)
-
-        # raise NotImplementedError("This is an abstract class, subclasses should implement this.")
+    @abstractmethod
+    def findAttributes(self, db: str) -> dict:
+        raise NotImplementedError("This is an abstract class, subclasses should implement this.")
     
     @abstractmethod
-    def findAttributes(self, db: str) -> list:
+    def verify(self, db: str):
         raise NotImplementedError("This is an abstract class, subclasses should implement this.")

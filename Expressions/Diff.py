@@ -1,6 +1,7 @@
 from copy import deepcopy
 from Expressions.Expr import Expr
 from Expressions.Rel import Rel
+from Expressions.InvalidExpression import schemaNotEqualError
 
 class Diff(Expr):
 
@@ -19,15 +20,28 @@ class Diff(Expr):
     def __str__(self) -> str:
         return f"Diff({str(self.expr1)}, {str(self.expr2)})"
     
-    def findAttributes(self, db: str) -> list:
+    def verify(self, db: str):
         
-        if (db != self.db):
-            self.db = db
-            self.attributes = deepcopy(self.expr1.findAttributes(db))
+        self.expr1.verify(db)
+        self.expr2.verify(db)
 
+        attrs1 = self.expr1.findAttributes(db)
+        attrs2 = self.expr2.findAttributes(db)
+
+        if (len(attrs1) != len(attrs2)):
+            schemaNotEqualError(self, self.expr1, self.expr2, attrs1, attrs2)
+
+        for key in attrs1:
+            if (key not in attrs2 or attrs1[key] != attrs2[key]):
+                schemaNotEqualError(self, self.expr1, self.expr2, attrs1, attrs2)
+
+    def findAttributes(self, db: str) -> list:
+
+        self.attributes = deepcopy(self.expr1.findAttributes(db))
         return self.attributes
 
     def toSQL(self, db: str) -> str:
+
         expr1_SQL = self.expr1.toSQL(db)
         expr2_SQL = self.expr2.toSQL(db)
 

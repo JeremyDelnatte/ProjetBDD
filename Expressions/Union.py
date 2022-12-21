@@ -1,6 +1,7 @@
 from copy import deepcopy
 from Expressions.Expr import Expr
 from Expressions.Rel import Rel
+from Expressions.InvalidExpression import schemaNotEqualError
 
 class Union(Expr):
 
@@ -19,12 +20,24 @@ class Union(Expr):
     def __str__(self) -> str:
         return f"Union({str(self.expr1)}, {str(self.expr2)})"
     
+    def verify(self, db: str):
+        
+        self.expr1.verify(db)
+        self.expr2.verify(db)
+
+        attrs1 = self.expr1.findAttributes(db)
+        attrs2 = self.expr2.findAttributes(db)
+
+        if (len(attrs1) != len(attrs2)):
+            schemaNotEqualError(self, self.expr1, self.expr2, attrs1, attrs2)
+
+        for key in attrs1:
+            if (key not in attrs2 or attrs1[key] != attrs2[key]):
+                schemaNotEqualError(self, self.expr1, self.expr2, attrs1, attrs2)
+
     def findAttributes(self, db: str) -> list:
         
-        if (db != self.db):
-            self.db = db
-            self.attributes = deepcopy(self.expr1.findAttributes(db))
-
+        self.attributes = deepcopy(self.expr1.findAttributes(db))
         return self.attributes
 
     def toSQL(self, db: str) -> str:

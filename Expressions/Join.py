@@ -1,6 +1,7 @@
 from copy import deepcopy
 from Expressions.Expr import Expr
 from Expressions.Rel import Rel
+from Expressions.InvalidExpression import sameAttributsDifferentTypeError
 
 class Join(Expr):
 
@@ -15,26 +16,26 @@ class Join(Expr):
 
         self.expr1 = expr1
         self.expr2 = expr2
-        self.intersectAttributes = []
 
     def __str__(self) -> str:
         return f"Join({str(self.expr1)}, {str(self.expr2)})"
     
+    def verify(self, db: str):
+        
+        self.expr1.verify(db)
+        self.expr2.verify(db)
+
+        attrs1 = self.expr1.findAttributes(db)
+        attrs2 = self.expr2.findAttributes(db)
+
+        for attr in attrs1:
+            if (attr in attrs2 and attrs1[attr] != attrs2[attr]):
+                sameAttributsDifferentTypeError(self, attr, self.expr1, self.expr2, attrs1, attrs2)
+
     def findAttributes(self, db: str) -> list:
 
-        if (db != self.db):
-            self.db = db
-
-            self.attributes = deepcopy(self.expr1.findAttributes(db))
-            attributes2 = self.expr2.findAttributes(db)
-
-            for attr in attributes2:
-                if (attr not in self.attributes):
-                    self.attributes.append(deepcopy(attr))
-
-                else:
-                    self.intersectAttributes.append(deepcopy(attr))
-
+        self.attributes = deepcopy(self.expr1.findAttributes(db))
+        self.attributes.update(deepcopy(self.expr2.findAttributes(db)))
         return self.attributes
 
     def toSQL(self, db: str) -> str:
@@ -59,11 +60,4 @@ class Join(Expr):
         else:
             expr2_SQL = f"({expr2_SQL})"
 
-        # Si les deux listes ont le même nombre d'attributs, ça siginifie donc qu'elles ont les mêmes attributs.
-        # Et donc on fait l'intersection entre les deux tables.
-        if (len(self.intersectAttributes) == len(self.attributes)):
-            return f"select * from {expr1_SQL} intersect select * from {expr2_SQL}"
-        
-        # Dans les autres cas, on fait un natural join. (Un natural join fonctionnerait aussi au dessus mais ne retire pas les doublons(à part si on met distinct))
-        else:
-            return f"select * from {expr1_SQL} natural join {expr2_SQL}"
+        return f"select distinct * from {expr1_SQL} natural join {expr2_SQL}"
