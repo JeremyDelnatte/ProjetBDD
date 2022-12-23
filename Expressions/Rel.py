@@ -3,6 +3,13 @@ from sqlite3 import connect
 from Expressions.InvalidExpression import tableDoesNotExistsError
 
 class Rel(Expr):
+    """
+    Classe qui représente une relation en SPJRUD.
+
+            Attributes:
+                    attributes (dict): Le dictionnaire des attributs avec comme clé le nom et comme valeur le type de l'attribut
+                    relName (str): Le nom de la relation
+    """
 
     def __init__(self, relName: str):
         super().__init__()
@@ -31,4 +38,4 @@ class Rel(Expr):
         return self.attributes
 
     def toSQL(self) -> str:
-        return f"select * from {self.relName}"
+        return f"select distinct * from {self.relName}"

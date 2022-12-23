@@ -4,6 +4,15 @@ from Expressions.Rel import Rel
 from Expressions.InvalidExpression import attributNotInSchemaError, attributAlreadyExists
 
 class Rename(Expr):
+    """
+    Classe qui représente l'opérateur Rename en SPJRUD.
+
+            Attributes:
+                    attributes (dict): Le dictionnaire des attributs avec comme clé le nom et comme valeur le type de l'attribut
+                    attr (str): L'attribut qui va être renommer
+                    name(str): Le nom qui va être donné à l'attribut attr
+                    expr (Expr): La sous expression
+    """
 
     def __init__(self, attr: str, name: str, expr: Expr):
         super().__init__()
@@ -41,7 +50,17 @@ class Rename(Expr):
         self.attributes = deepcopy(self.expr.findAttributes(db))
 
         # On ne vérifie pas si l'attribut existe ou non mais cela va être vérifier après lors du verify()
-        self.attributes[self.attr] = self.name
+        # Permet de garder le même ordre.
+        try:
+            index = list(self.attributes.keys()).index(self.attr)
+            items = list(self.attributes.items())
+            items[index] = (self.name, self.attributes[self.attr])
+            self.attributes = dict(items)
+
+        # On ne fait rien car par près lors du verify() une erreur va être lancé.
+        except ValueError:
+            pass
+            
         return self.attributes
 
 
@@ -60,4 +79,4 @@ class Rename(Expr):
         attrs = list(self.attributes.keys())
         attrs[attrs.index(self.name)] = f"{self.attr} '{self.name}'"    
 
-        return f"select {', '.join(attrs)} from {expr_SQL}"
+        return f"select distinct {', '.join(attrs)} from {expr_SQL}"

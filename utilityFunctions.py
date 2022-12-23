@@ -1,10 +1,39 @@
-def createTableFromQuery(cur, query: str, tableName: str):
+import sqlite3
+
+
+def createTableFromQuery(query: str, tableName: str, db: str):
+    """
+    Permet de créer un table à partir d'une requête SQL. Si la table existe, l'ancienne table est écrasé.
+
+            Parameters:
+                    query (str): La requête SQL
+                    tableName (str): Le nom de la nouvelle table
+                    db (str): Le fichier de la base de données
+
+            Returns:
+                    None
+    """
+
+    con = sqlite3.connect(db)
+    cur = con.cursor()
 
     cur.execute(f"DROP TABLE IF EXISTS {tableName}")
     cur.execute(f"CREATE TABLE {tableName} as {query}")
-    cur.connection.commit()
+    con.commit()
 
-def printResultFromQuery(cur, query: str):
+def printResultFromQuery(query: str, db: str):
+    """
+    Permet d'afficher le resultat d'une requête SQL.
+
+            Parameters:
+                    query (str): La requête SQL
+                    db (str): Le fichier de la base de données
+
+            Returns:
+                    None
+    """
+
+    cur = sqlite3.connect(db).cursor()
 
     cur.execute(query)
     attributeNames = [attr[0] for attr in cur.description]

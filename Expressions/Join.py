@@ -4,6 +4,14 @@ from Expressions.Rel import Rel
 from Expressions.InvalidExpression import sameAttributsDifferentTypeError
 
 class Join(Expr):
+    """
+    Classe qui représente l'opérateur Join en SPJRUD.
+
+            Attributes:
+                    attributes (dict): Le dictionnaire des attributs avec comme clé le nom et comme valeur le type de l'attribut
+                    expr1 (Expr): La sous expression 1
+                    expr2 (Expr): La sous expression 2
+    """
 
     def __init__(self, expr1: Expr, expr2: Expr):
         super().__init__()
@@ -28,12 +36,14 @@ class Join(Expr):
         attrs1 = self.expr1.attributes
         attrs2 = self.expr2.attributes
 
+        # Permet de vérifier que tous les attributs de expr1 sont aussi des attributs de expr2
         for attr in attrs1:
             if (attr in attrs2 and attrs1[attr] != attrs2[attr]):
                 sameAttributsDifferentTypeError(self, attr, self.expr1, self.expr2, attrs1, attrs2)
 
     def findAttributes(self, db: str) -> list:
 
+        # Pas besoin de faire une vérification ici car cela va être fait dans la vérification par après.
         self.attributes = deepcopy(self.expr1.findAttributes(db))
         self.attributes.update(deepcopy(self.expr2.findAttributes(db)))
         return self.attributes

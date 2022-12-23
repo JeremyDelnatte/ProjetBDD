@@ -4,6 +4,14 @@ from Expressions.Rel import Rel
 from Expressions.InvalidExpression import attributNotInSchemaError
 
 class Proj(Expr):
+    """
+    Classe qui représente l'opérateur Project en SPJRUD.
+
+            Attributes:
+                    attributes (dict): Le dictionnaire des attributs avec comme clé le nom et comme valeur le type de l'attribut
+                    attrs (list[str]): La liste des attributs à projeter.
+                    expr (Expr): La sous expression
+    """
 
     def __init__(self, attrs: list[str], expr: Expr):
         super().__init__()
@@ -25,6 +33,7 @@ class Proj(Expr):
         self.expr.verify()
         attributes = self.expr.attributes
 
+        # Permet de vérifier si les attributs à projeter sont dans les attributs de expr.
         for attr in self.attrs:
             if (attr not in attributes):
                 attributNotInSchemaError(self, attr, self.expr, attributes)

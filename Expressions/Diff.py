@@ -4,6 +4,14 @@ from Expressions.Rel import Rel
 from Expressions.InvalidExpression import schemaNotEqualError
 
 class Diff(Expr):
+    """
+    Classe qui représente l'opérateur Difference en SPJRUD.
+
+            Attributes:
+                    attributes (dict): Le dictionnaire des attributs avec comme clé le nom et comme valeur le type de l'attribut
+                    expr1 (Expr): La sous expression 1
+                    expr2 (Expr): La sous expression 2
+    """
 
     def __init__(self, expr1: Expr, expr2: Expr):
         super().__init__()
@@ -31,13 +39,16 @@ class Diff(Expr):
         if (len(attrs1) != len(attrs2)):
             schemaNotEqualError(self, self.expr1, self.expr2, attrs1, attrs2)
 
+        # Permet de vérifier que tous les attributs de expr1 sont aussi des attributs de expr2
         for key in attrs1:
             if (key not in attrs2 or attrs1[key] != attrs2[key]):
                 schemaNotEqualError(self, self.expr1, self.expr2, attrs1, attrs2)
 
     def findAttributes(self, db: str) -> dict:
 
+        # Pas besoin de faire une vérification ici car cela va être fait dans la vérification par après.
         self.attributes = deepcopy(self.expr1.findAttributes(db))
+        self.expr2.findAttributes(db)
         return self.attributes
 
     def toSQL(self) -> str:

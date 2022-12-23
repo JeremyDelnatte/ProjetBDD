@@ -6,6 +6,12 @@ from Expressions.Proj import Proj
 from Expressions.InvalidExpression import attributNotInSchemaError, differentTypeError
 
 class Cst:
+    """
+    Classe qui représente une constante pour l'opérateur Select en SPJRUD.
+
+            Attributes:
+                    cst (str): La constante
+    """
 
     def __init__(self, cst: str):
 
@@ -15,9 +21,25 @@ class Cst:
         self.cst = cst
 
     def __str__(self) -> str:
+        """
+        Permet de convertir la constante en une chaîne de caractères. 
+
+                Returns:
+                        str : self converti en chaîne de caractères.
+        """
         return f"Cst('{self.cst}')"
 
 class Select(Expr):
+    """
+    Classe qui représente l'opérateur Select en SPJRUD.
+
+            Attributes:
+                    attributes (dict): Le dictionnaire des attributs avec comme clé le nom et comme valeur le type de l'attribut
+                    attr1 (str): L'attribut à gauche de l'operateur
+                    operator (str): L'opérateur
+                    attr2 (str or Cst): Soit une constante ou soit un attribut à droite de l'opérateur
+                    expr (Expr): La sous expression
+    """
 
     def __init__(self, attr1: str, operator: str, attr2, expr: Expr):
         super().__init__()
@@ -25,8 +47,8 @@ class Select(Expr):
         if (not isinstance(attr1, str)):
             raise TypeError(f"The type of attr1 must be str, but is {type(attr1).__name__}.")
         
-        elif (not isinstance(operator, str) or operator != "="):
-            raise TypeError("The type of operator must be str and be '='.")
+        elif (operator not in ("=", "<", "<=", ">", ">=")):
+            raise TypeError("Operator must be '=', '<', '<=', '>', '>='.")
         
         elif (not isinstance(attr2, (str, Cst))):
             raise TypeError(f"The type of attr2 must be str or Cst, but is {type(attr2).__name__}.")
@@ -66,6 +88,7 @@ class Select(Expr):
 
     def findAttributes(self, db: str) -> list:
 
+        # Pas besoin de faire une vérification ici car cela va être fait dans la vérification par après.
         self.attributes = deepcopy(self.expr.findAttributes(db))
         return self.attributes
 
