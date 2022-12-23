@@ -18,7 +18,10 @@ Au cours de l'implémentation, la seul majeur difficulté que nous avons rencont
 
 ## Fonctionnalités supplémentaires
 
-
+Nous avons décider d'ajouter les fonctionnalités supplémentaires proposer dans l'énoncé du projet. À savoir:
+    - Convertir une expression __SPJRUD__ en une chaîne de caractères, pour ce faire nous avons redéfini la méthode _\_\_str\_\_()_ de chaque opération.
+    - _createTableFromQuery()_ qui permet créer une nouvelle table à partir d'une requête __SQL__.
+    - `printResultFromQuery()` qui permet d'afficher le résultat d'une requête dans le terminal. 
 
 ## Utilisation
 
