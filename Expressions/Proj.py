@@ -20,10 +20,10 @@ class Proj(Expr):
     def __str__(self) -> str:
         return f"Proj({self.attrs}, {str(self.expr)})"
 
-    def verify(self, db: str):
+    def verify(self):
         
-        self.expr.verify(db)
-        attributes = self.expr.findAttributes(db)
+        self.expr.verify()
+        attributes = self.expr.attributes
 
         for attr in self.attrs:
             if (attr not in attributes):
@@ -41,9 +41,9 @@ class Proj(Expr):
 
         return self.attributes
     
-    def toSQL(self, db: str) -> str:
+    def toSQL(self) -> str:
         
-        expr_SQL = self.expr.toSQL(db)
+        expr_SQL = self.expr.toSQL()
 
         # Une expression Rel est sous forme "select * from relName",
         # donc il est plus intéressant de mettre directement relName. 

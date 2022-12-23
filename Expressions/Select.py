@@ -43,11 +43,11 @@ class Select(Expr):
         attr2String = str(self.attr2) if isinstance(self.attr2, Cst) else f"'{self.attr2}'"
         return f"Select('{self.attr1}', '{self.operator}', {attr2String}, {str(self.expr)})"  
 
-    def verify(self, db: str):
+    def verify(self):
         
-        self.expr.verify(db)
+        self.expr.verify()
 
-        attrs = self.expr.findAttributes(db)
+        attrs = self.expr.attributes
 
         # Permet de vérifier que self.attr1 existe bien en tant qu'attribut de self.expr.
         if (self.attr1 not in attrs):
@@ -70,16 +70,15 @@ class Select(Expr):
         return self.attributes
 
 
-    def toSQL(self, db: str) -> str:
+    def toSQL(self) -> str:
+        expr_SQL = self.expr.toSQL()
 
         # Si attr2 est une constante, on ajoute des ''.
         attr2_SQL = f"'{self.attr2.cst}'" if isinstance(self.attr2, Cst) else self.attr2
-        
-        expr_SQL = self.expr.toSQL(db)
 
         # Les expressions Rel, Rename, Proj sont déjà sous la forme "select ... from ..."
         if (not isinstance(self.expr, (Rel, Rename, Proj))):
             expr_SQL = f"select * from ({expr_SQL})"
 
-        return expr_SQL + f" where {self.attr1 + self.operator + attr2_SQL}"
+        return expr_SQL + f" where {self.attr1} {self.operator} {attr2_SQL}"
     

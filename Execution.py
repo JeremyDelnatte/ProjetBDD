@@ -6,7 +6,7 @@ def toSQL(request: Expr, db: str) -> str:
     request.verify()
     return request.toSQL()
 
-def verify(request: str, db: str):
+def verify(request: Expr, db: str):
     request.findAttributes(db)
     request.verify()
 

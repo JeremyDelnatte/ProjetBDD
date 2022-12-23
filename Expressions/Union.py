@@ -20,13 +20,13 @@ class Union(Expr):
     def __str__(self) -> str:
         return f"Union({str(self.expr1)}, {str(self.expr2)})"
     
-    def verify(self, db: str):
+    def verify(self):
         
-        self.expr1.verify(db)
-        self.expr2.verify(db)
+        self.expr1.verify()
+        self.expr2.verify()
 
-        attrs1 = self.expr1.findAttributes(db)
-        attrs2 = self.expr2.findAttributes(db)
+        attrs1 = self.expr1.attributes
+        attrs2 = self.expr2.attributes
 
         if (len(attrs1) != len(attrs2)):
             schemaNotEqualError(self, self.expr1, self.expr2, attrs1, attrs2)
@@ -40,9 +40,9 @@ class Union(Expr):
         self.attributes = deepcopy(self.expr1.findAttributes(db))
         return self.attributes
 
-    def toSQL(self, db: str) -> str:
-        expr1_SQL = self.expr1.toSQL(db)
-        expr2_SQL = self.expr2.toSQL(db)
+    def toSQL(self) -> str:
+        expr1_SQL = self.expr1.toSQL()
+        expr2_SQL = self.expr2.toSQL()
 
         # Une expression Rel est sous forme "select * from relName",
         # donc il est plus intéressant de mettre directement relName. 

@@ -15,10 +15,10 @@ class Rel(Expr):
     def __str__(self) -> str:
         return f"Rel('{self.relName}')"
     
-    def verify(self, db: str):
+    def verify(self):
         
         # Permet de vérifier que relName est bien une table de db.
-        if (len(self.findAttributes(db)) == 0):
+        if (len(self.attributes) == 0):
             tableDoesNotExistsError(self, self.relName)
 
     def findAttributes(self, db: str) -> list:
@@ -30,5 +30,5 @@ class Rel(Expr):
 
         return self.attributes
 
-    def toSQL(self, db: str) -> str:
+    def toSQL(self) -> str:
         return f"select * from {self.relName}"

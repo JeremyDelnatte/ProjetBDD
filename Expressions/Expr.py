@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 class Expr(ABC):
 
     @abstractmethod
-    def toSQL(self, db: str) -> str:
+    def toSQL(self) -> str:
         raise NotImplementedError("This is an abstract class, subclasses should implement this.")
 
     def __init__(self):
@@ -15,5 +15,5 @@ class Expr(ABC):
         raise NotImplementedError("This is an abstract class, subclasses should implement this.")
     
     @abstractmethod
-    def verify(self, db: str):
+    def verify(self):
         raise NotImplementedError("This is an abstract class, subclasses should implement this.")

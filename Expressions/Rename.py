@@ -24,11 +24,11 @@ class Rename(Expr):
     def __str__(self) -> str:
         return f"Rename('{self.attr}', '{self.name}', {str(self.expr)})"
 
-    def verify(self, db: str):
+    def verify(self):
         
-        self.expr.verify(db)
+        self.expr.verify()
 
-        attrs = self.expr.findAttributes(db)
+        attrs = self.expr.attributes
 
         if (self.attr not in attrs):
             attributNotInSchemaError(self, self.attr, self.expr, attrs)
@@ -45,9 +45,8 @@ class Rename(Expr):
         return self.attributes
 
 
-    def toSQL(self, db: str) -> str:
-        expr_SQL = self.expr.toSQL(db)
-        self.findAttributes(db)
+    def toSQL(self) -> str:
+        expr_SQL = self.expr.toSQL()
 
         # Une expression Rel est sous forme "select * from relName",
         # donc il est plus intéressant de mettre directement relName. 

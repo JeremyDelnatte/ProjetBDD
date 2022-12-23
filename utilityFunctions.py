@@ -1,5 +1,3 @@
-import sqlite3
-
 def createTableFromQuery(cur, query: str, tableName: str):
 
     cur.execute(f"DROP TABLE IF EXISTS {tableName}")
